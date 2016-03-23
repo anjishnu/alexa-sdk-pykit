@@ -23,9 +23,9 @@ class Request(object):
     Simple wrapper around the JSON request
     received by the module
     """
-    def __init__(self, request_dict):
+    def __init__(self, request_dict, metadata=None):
         self.request = request_dict
-        self.metadata = {}
+        self.metadata = metadata or {}
         if self.intent_name():
             self.slots = self.get_slot_map()
 
@@ -162,11 +162,10 @@ class VoiceHandler(ResponseBuilder):
         return _handler
 
 
-    def route_request(self, request_json, metadata={}):
+    def route_request(self, request_json, metadata=None):
         ''' Route the request object to the right handler function '''
 
-        request = Request(request_json)
-        request.meta_data = metadata
+        request = Request(request_json, metadata)
 
         handler_fn = self._handlers[self._default] # Set default handling for noisy requests
 
