@@ -36,7 +36,7 @@ def default_handler(request):
 @alexa.request_handler("LaunchRequest")
 def launch_request_handler(request):
     """
-    Annoatate functions with @VoiceHandler so that they can be automatically mapped
+    Annotate functions with @VoiceHandler so that they can be automatically mapped
     to request types.
     Use the 'request_type' field to map them to non-intent requests
     """
