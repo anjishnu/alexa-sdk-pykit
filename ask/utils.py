@@ -56,7 +56,7 @@ class Request(object):
 
     def session(self):
         """Return the session attributes which are currently set."""
-        return self.request["session"]["sessionAttributes"]
+        return self.request["session"]["attributes"]
 
     def get_slot_value(self, slot_name):
         try:
