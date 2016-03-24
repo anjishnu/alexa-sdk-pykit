@@ -26,6 +26,9 @@ class Request(object):
     def __init__(self, request_dict, metadata=None):
         self.request = request_dict
         self.metadata = metadata or {}
+        self.session = self.request.get('session',{}).get('attributes',{})
+        if not self.session:
+            self.session = {}
         if self.intent_name():
             self.slots = self.get_slot_map()
 
@@ -53,10 +56,6 @@ class Request(object):
 
     def session_id(self):
         return self.request["session"]["sessionId"]
-
-    def session(self):
-        """Return the session attributes which are currently set."""
-        return self.request["session"]["attributes"]
 
     def get_slot_value(self, slot_name):
         try:
