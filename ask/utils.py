@@ -82,11 +82,10 @@ class ResponseBuilder(object):
 
     @classmethod
     def create_response(self, message=None, end_session=False, card_obj=None,
-                        reprompt_message=None, session_attributes=None, is_ssml=None):
+                        reprompt_message=None, is_ssml=None):
         """
         message - text message to be spoken out by the Echo
         end_session - flag to determine whether this interaction should end the session
-        session_attributes - a dictionary of values to be sent in the response which will come back with the next request in this session
         card_obj = JSON card object to substitute the 'card' field in the raw_response
         """
         response = dict(self.base_response)
@@ -97,8 +96,6 @@ class ResponseBuilder(object):
             response['response']['card'] = card_obj
         if reprompt_message:
             response['response']['reprompt'] = self.create_speech(reprompt_message, is_ssml)
-        if session_attributes:
-            response['sessionAttributes'] = session_attributes
         return response
 
     @classmethod
@@ -176,4 +173,6 @@ class VoiceHandler(ResponseBuilder):
             ''' Route to right intent handler '''
             handler_fn = self._handlers['IntentRequest'][request.intent_name()]
 
-        return handler_fn(request)
+        response = handler_fn(request)
+        response['sessionAttributes'] = request.session
+        return response
