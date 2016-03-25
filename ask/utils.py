@@ -89,7 +89,7 @@ class ResponseBuilder(object):
         session_attributes - a dictionary of values to be sent in the response which will come back with the next request in this session
         card_obj = JSON card object to substitute the 'card' field in the raw_response
         """
-        response = self.base_response
+        response = dict(self.base_response)
         if message:
             response['response'] = self.create_speech(message, is_ssml)
         response['response']['shouldEndSession'] = end_session
