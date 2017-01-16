@@ -63,13 +63,9 @@ class Request(object):
 
     def has_valid_app_id(self):
         if not self.supported_app_ids:
-            print(self.supported_app_ids)
-            print('1')
             return True
         if not self.application_id():
-            print('2')
             return False
-        print('3')
         return self.application_id() in self.supported_app_ids
 
     def get_slot_value(self, slot_name):
