@@ -1,4 +1,5 @@
 from . import alexa_io
+from alexa_io import InvalidAppIdException
 
 ''' 
 Setting up some nice abstractions around good object oritented code.
