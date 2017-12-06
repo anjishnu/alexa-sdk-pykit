@@ -1,4 +1,4 @@
-from nose.tools import assert_equal, assert_dict_equal, assert_true
+from nose.tools import assert_equal, assert_dict_equal, assert_true, raises
 
 from .context import ask
 from .fixtures.requests import (TEST_SESSION_ENDED_REQUEST, TEST_LAUNCH_REQUEST,
@@ -83,3 +83,14 @@ class TestVoiceHandlerRouteRequest(object):
 
         response = ask.alexa.route_request(req_json)
         assert_true(response['request_handler_called'])
+
+    @raises(ask.InvalidAppIdException)
+    def test_raises_invalid_app_id(self):
+        req_json = TEST_INTENT_REQUEST
+        ids = ['supported_id', 'another_bad_id']
+        ask.alexa.route_request(req_json, app_ids=ids)
+
+    def test_valid_app_id(self):
+        req_json = TEST_INTENT_REQUEST
+        ids = ['amzn1.echo-sdk-ams.app.000000-d0ed-0000-ad00-000000d00ebe']
+        ask.alexa.route_request(req_json, app_ids=ids)

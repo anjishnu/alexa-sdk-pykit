@@ -57,6 +57,27 @@ class TestStandardRequest(object):
 
         assert_equal(session_id, "SessionId.d461672c-2997-4d9d-9a8c-a67834acb9aa")
 
+    def test_request_returns_application_id(self):
+        application_id = self.example.application_id()
+
+        assert_equal(application_id, "amzn1.echo-sdk-ams.app.a306b3a3-3331-43c1-87bd-87d29d16fac8")
+
+    def test_request_has_valid_application_id_empty_app_ids(self):
+        assert_true(self.example.has_valid_app_id())
+
+    def test_request_has_valid_application_id(self):
+        self.example.supported_app_ids = ['amzn1.echo-sdk-ams.app.a306b3a3-3331-43c1-87bd-87d29d16fac8']
+
+        assert_true(self.example.has_valid_app_id())
+
+    def test_request_has_invalid_application_id(self):
+        def app_id_mock():
+            return 'bad_app_id'
+
+        self.example.supported_app_ids = ['amzn1.echo-sdk-ams.app.a306b3a3-3331-43c1-87bd-87d29d16fac8']
+        self.example.application_id = app_id_mock
+        assert_false(self.example.has_valid_app_id())
+
     def test_request_returns_slot_value(self):
         val1 = self.example.get_slot_value("example1")
         val2 = self.example.get_slot_value("example2")

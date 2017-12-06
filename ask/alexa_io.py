@@ -13,15 +13,20 @@ RAW_RESPONSE = """
 }"""
 
 
+class InvalidAppIdException(Exception):
+    pass
+
+
 class Request(object):
     """
     Simple wrapper around the JSON request
     received by the module
     """
-    def __init__(self, request_dict, metadata=None):
+    def __init__(self, request_dict, metadata=None, supported_app_ids=None):
         self.request = request_dict
         self.metadata = metadata or {}
         self.session = self.request.get('session', {}).get('attributes', {})
+        self.supported_app_ids = supported_app_ids
         if self.intent_name():
             self.slots = self.get_slot_map()
 
@@ -49,6 +54,19 @@ class Request(object):
 
     def session_id(self):
         return self.request["session"]["sessionId"]
+
+    def application_id(self):
+        try:
+            return self.request['session']['application']['applicationId']
+        except:
+            return None
+
+    def has_valid_app_id(self):
+        if not self.supported_app_ids:
+            return True
+        if not self.application_id():
+            return False
+        return self.application_id() in self.supported_app_ids
 
     def get_slot_value(self, slot_name):
         try:
@@ -192,11 +210,18 @@ class VoiceHandler(ResponseBuilder):
 
         return _handler
 
-    def route_request(self, request_json, metadata=None):
+    def route_request(self, request_json, metadata=None, app_ids=None):
 
         ''' Route the request object to the right handler function '''
         request = Request(request_json)
+        request.supported_app_ids = app_ids
         request.metadata = metadata
+
+        # before we do anything, lets verify the application id
+        # if app_ids is not passed in, verification does not occur
+        if not request.has_valid_app_id():
+            raise InvalidAppIdException('Invalid ApplicationId: %s' % request.application_id())
+
         # add reprompt handler or some such for default?
         handler_fn = self._handlers[self._default] # Set default handling for noisy requests
 
